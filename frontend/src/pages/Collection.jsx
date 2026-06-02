@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useMemo } from 'react';
 import { products } from '../assets/assets';
 import ProductItem from '../components/ProductItem';
 import Title from '../components/Title';
@@ -12,38 +12,37 @@ const Collection = () => {
 
   const { search } = useContext(ShopContext);
 
-  let filteredProducts = products;
+  const filteredProducts = useMemo(() => {
+    let items = [...products];
 
-  // CATEGORY FILTER
-  if (category.length > 0) {
-    filteredProducts = filteredProducts.filter((item) =>
-      category.includes(item.category)
-    );
-  }
+    // CATEGORY FILTER
+    if (category.length > 0) {
+      items = items.filter((item) => category.includes(item.category));
+    }
 
-  // SUBCATEGORY FILTER
-  if (subCategory.length > 0) {
-    filteredProducts = filteredProducts.filter((item) =>
-      subCategory.includes(item.subCategory)
-    );
-  }
+    // SUBCATEGORY FILTER
+    if (subCategory.length > 0) {
+      items = items.filter((item) => subCategory.includes(item.subCategory));
+    }
 
-  // SEARCH FILTER (LIVE)
-  if (search && search.trim() !== '') {
-    filteredProducts = filteredProducts.filter((item) =>
-      item.name.toLowerCase().includes(search.toLowerCase())
-    );
-  }
+    // SEARCH FILTER
+    if (search && search.trim() !== '') {
+      items = items.filter((item) =>
+        item.name.toLowerCase().includes(search.toLowerCase())
+      );
+    }
 
-  // SORTING
-  if (sortType === 'low-high') {
-    filteredProducts = [...filteredProducts].sort((a, b) => a.price - b.price);
-  }
+    // SORTING
+    if (sortType === 'low-high') {
+      items.sort((a, b) => a.price - b.price);
+    }
 
-  if (sortType === 'high-low') {
-    filteredProducts = [...filteredProducts].sort((a, b) => b.price - a.price);
-  }
+    if (sortType === 'high-low') {
+      items.sort((a, b) => b.price - a.price);
+    }
 
+    return items;
+  }, [category, subCategory, search, sortType]);
   // toggle category
   const toggleCategory = (e) => {
     if (category.includes(e.target.value)) {

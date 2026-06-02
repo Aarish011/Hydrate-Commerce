@@ -6,7 +6,7 @@ import { ShopContext } from '../context/ShopContext';
 const Navbar = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [open, setOpen] = useState(false);
-  const { setShowSearch } = useContext(ShopContext);
+  const { setShowSearch, getCartCount } = useContext(ShopContext);
 
   return (
     <div className='flex justify-between items-center font-medium py-5 pr-12'>
@@ -28,22 +28,22 @@ const Navbar = () => {
         </NavLink>
 
         <NavLink
-          to='/about'
-          className={({ isActive }) =>
-            `flex flex-col items-center gap-1 ${isActive ? 'active' : ''}`
-          }
-        >
-          <p>ABOUT</p>
-          <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden' />
-        </NavLink>
-
-        <NavLink
           to='/collection'
           className={({ isActive }) =>
             `flex flex-col items-center gap-1 ${isActive ? 'active' : ''}`
           }
         >
           <p>COLLECTION</p>
+          <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden' />
+        </NavLink>
+
+        <NavLink
+          to='/about'
+          className={({ isActive }) =>
+            `flex flex-col items-center gap-1 ${isActive ? 'active' : ''}`
+          }
+        >
+          <p>ABOUT</p>
           <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden' />
         </NavLink>
 
@@ -70,18 +70,22 @@ const Navbar = () => {
         {/* Profile */}
         {/* Profile */}
         <div className='group relative'>
-          <img
-            src={assets.profile_icon}
-            className='w-5 cursor-pointer'
-            alt='profile'
-            onClick={() => setShowProfile(!showProfile)}
-          />
+          <Link to={'login'}>
+            <img
+              src={assets.profile_icon}
+              className='w-5 cursor-pointer'
+              alt='profile'
+              onClick={() => setShowProfile(!showProfile)}
+            />
+          </Link>
 
           {/* Desktop Dropdown */}
           <div className='hidden sm:group-hover:block absolute right-0 pt-4'>
             <div className='flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-700'>
               <p>My Profile</p>
-              <p>Orders</p>
+              <Link to={'/order'}>
+                <p>Orders</p>
+              </Link>
               <p>Logout</p>
             </div>
           </div>
@@ -106,7 +110,7 @@ const Navbar = () => {
             className='w-5 cursor-pointer'
           />
           <p className='absolute -right-1 -bottom-1 bg-black text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center'>
-            10
+            {getCartCount()}
           </p>
         </NavLink>
 
@@ -137,19 +141,19 @@ const Navbar = () => {
 
           <NavLink
             onClick={() => setOpen(false)}
-            to='/about'
+            to='/collection'
             className='text-lg'
           >
-            ABOUT
+            COLLECTION
             <hr className='w-10 border-black mt-1' />
           </NavLink>
 
           <NavLink
             onClick={() => setOpen(false)}
-            to='/collection'
+            to='/about'
             className='text-lg'
           >
-            COLLECTION
+            ABOUT
             <hr className='w-10 border-black mt-1' />
           </NavLink>
 

@@ -12,10 +12,12 @@ import Contact from './pages/Contact';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import SearchBar from './components/Searchbar';
+import { ToastContainer, toast } from 'react-toastify';
 
 const App = () => {
   return (
     <div>
+      <ToastContainer />
       <Navbar />
       <SearchBar />
       <Routes>
@@ -27,7 +29,7 @@ const App = () => {
         <Route path='/login' element={<Login />} />
         <Route path='/order' element={<Orders />} />
         <Route path='/place-order' element={<PlaceOrder />} />
-        <Route path='/products' element={<Product />} />
+        <Route path='/product/:productId' element={<Product />} />
       </Routes>
       <Footer />
     </div>
