@@ -11,8 +11,9 @@ const adminLogin = async (req, res) => {
       password === process.env.ADMIN_PASSWORD
     ) {
       const token = jwt.sign(
-        { email: process.env.ADMIN_EMAIL },
+        { email: process.env.ADMIN_EMAIL, role: 'admin' },
         process.env.JWT_SECRET,
+
         { expiresIn: '7d' }
       );
 

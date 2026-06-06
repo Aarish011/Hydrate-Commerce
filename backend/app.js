@@ -7,6 +7,7 @@ import ConnectCloudinary from './config/cloudinary.js';
 import adminRouter from './routes/adminRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import productRouter from './routes/productRoutes.js';
+import cartRoutes from './routes/cartRoutes.js';
 
 // app config
 ConnectDB();
@@ -16,7 +17,12 @@ const app = express();
 
 // middleware
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    credentials: true,
+  })
+);
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(cookieParser());
@@ -25,5 +31,6 @@ app.use(cookieParser());
 app.use('/api/user', userRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/product', productRouter);
+app.use('/api/cart', cartRoutes);
 
 export default app;

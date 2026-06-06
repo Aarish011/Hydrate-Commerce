@@ -1,5 +1,4 @@
 import React, { useState, useContext, useMemo } from 'react';
-import { products } from '../assets/assets';
 import ProductItem from '../components/ProductItem';
 import Title from '../components/Title';
 import { ShopContext } from '../context/ShopContext';
@@ -10,7 +9,7 @@ const Collection = () => {
   const [subCategory, setSubCategory] = useState([]);
   const [sortType, setSortType] = useState('relevant');
 
-  const { search } = useContext(ShopContext);
+  const { search, products } = useContext(ShopContext);
 
   const filteredProducts = useMemo(() => {
     let items = [...products];
@@ -42,23 +41,26 @@ const Collection = () => {
     }
 
     return items;
-  }, [category, subCategory, search, sortType]);
+  }, [category, subCategory, search, sortType, products]);
   // toggle category
   const toggleCategory = (e) => {
-    if (category.includes(e.target.value)) {
-      setCategory(category.filter((item) => item !== e.target.value));
-    } else {
-      setCategory([...category, e.target.value]);
-    }
-  };
+    const value = e.target.value;
 
-  // toggle subcategory
+    setCategory((prev) =>
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
+    );
+  };
+  //toggle sub category
   const toggleSubCategory = (e) => {
-    if (subCategory.includes(e.target.value)) {
-      setSubCategory(subCategory.filter((item) => item !== e.target.value));
-    } else {
-      setSubCategory([...subCategory, e.target.value]);
-    }
+    const value = e.target.value;
+
+    setSubCategory((prev) =>
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
+    );
   };
 
   return (

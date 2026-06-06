@@ -1,12 +1,32 @@
 import React, { useState, useContext } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets';
 import { ShopContext } from '../context/ShopContext';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const Navbar = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [open, setOpen] = useState(false);
-  const { setShowSearch, getCartCount } = useContext(ShopContext);
+  const { setShowSearch, getCartCount, backendURL, token, setToken } =
+    useContext(ShopContext);
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    try {
+      const response = await axios.post(`${backendURL}/api/user/logout`);
+
+      if (response.data.success) {
+        localStorage.removeItem('token');
+        setToken('');
+        navigate('/login');
+        toast.success('Logged Out');
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error('Logout Failed');
+    }
+  };
 
   return (
     <div className='flex justify-between items-center font-medium py-5 pr-12'>
@@ -68,39 +88,56 @@ const Navbar = () => {
         />
 
         {/* Profile */}
-        {/* Profile */}
         <div className='group relative'>
-          <Link to={'login'}>
+          {token ? (
             <img
               src={assets.profile_icon}
               className='w-5 cursor-pointer'
               alt='profile'
               onClick={() => setShowProfile(!showProfile)}
             />
-          </Link>
+          ) : (
+            <Link to='/login'>
+              <img
+                src={assets.profile_icon}
+                className='w-5 cursor-pointer'
+                alt='profile'
+              />
+            </Link>
+          )}
 
-          {/* Desktop Dropdown */}
-          <div className='hidden sm:group-hover:block absolute right-0 pt-4'>
-            <div className='flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-700'>
-              <p>My Profile</p>
-              <Link to={'/order'}>
-                <p>Orders</p>
-              </Link>
-              <p>Logout</p>
-            </div>
-          </div>
+          {token && (
+            <div className='hidden group-hover:block absolute right-0 pt-4 z-20'>
+              <div className='flex flex-col w-40 bg-white rounded-lg shadow-lg border overflow-hidden text-sm text-gray-700'>
+                <p className='px-4 py-3 cursor-pointer hover:bg-gray-100'>
+                  My Profile
+                </p>
 
-          {/* Mobile Dropdown */}
-          {showProfile && (
-            <div className='absolute right-0 top-8 bg-slate-100 py-3 px-5 w-36 shadow-md rounded sm:hidden z-50'>
-              <div className='flex flex-col gap-2 text-gray-700'>
-                <p>My Profile</p>
-                <p>Orders</p>
-                <p>Logout</p>
+                <Link to='/orders' className='px-4 py-3 hover:bg-gray-100'>
+                  Orders
+                </Link>
+
+                <p
+                  className='px-4 py-3 cursor-pointer hover:bg-red-50 hover:text-red-600'
+                  onClick={logout}
+                >
+                  Logout
+                </p>
               </div>
             </div>
           )}
         </div>
+
+        {/* Mobile Dropdown */}
+        {showProfile && (
+          <div className='absolute right-0 top-8 bg-slate-100 py-3 px-5 w-36 shadow-md rounded sm:hidden z-50'>
+            <div className='flex flex-col gap-2 text-gray-700'>
+              <p className='cursor-pointer'>My Profile</p>
+              <p className='cursor-pointer'>Orders</p>
+              <p className='cursor-pointer'>Logout</p>
+            </div>
+          </div>
+        )}
 
         {/* Cart */}
         <NavLink to='/cart' className='relative'>
