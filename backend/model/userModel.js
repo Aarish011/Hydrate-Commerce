@@ -22,6 +22,52 @@ const userSchema = new mongoose.Schema(
       type: Object,
       default: {},
     },
+
+    // Address field for storing user's shipping address
+    address: {
+      firstName: {
+        type: String,
+        default: '',
+      },
+      lastName: {
+        type: String,
+        default: '',
+      },
+      email: {
+        type: String,
+        default: '',
+      },
+      street: {
+        type: String,
+        default: '',
+      },
+      city: {
+        type: String,
+        default: '',
+      },
+      state: {
+        type: String,
+        default: '',
+      },
+      zipcode: {
+        type: String,
+        default: '',
+      },
+      country: {
+        type: String,
+        default: '',
+      },
+      phone: {
+        type: String,
+        default: '',
+      },
+    },
+
+    // Phone field for direct access (optional - can use address.phone instead)
+    phone: {
+      type: String,
+      default: '',
+    },
   },
   {
     timestamps: true,

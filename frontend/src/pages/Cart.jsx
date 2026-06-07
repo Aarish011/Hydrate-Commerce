@@ -3,6 +3,7 @@ import { ShopContext } from '../context/ShopContext';
 import Title from '../components/Title';
 import { assets } from '../assets/assets';
 import CartTotal from '../components/CartTotal';
+import { toast } from 'react-toastify';
 
 const Cart = () => {
   const {
@@ -13,6 +14,19 @@ const Cart = () => {
     updateQuantity,
     navigate,
   } = useContext(ShopContext);
+  if (products.length === 0) {
+    return <div className='text-center py-20'>Loading cart...</div>;
+  }
+
+  const validateToProceed = () => {
+    if (cartData.length === 0) {
+      toast.error('Your cart is empty');
+      navigate('/collection');
+      return;
+    }
+
+    navigate('/place-order');
+  };
 
   const cartData = [];
 
@@ -39,6 +53,8 @@ const Cart = () => {
           const productData = products.find(
             (product) => product._id === item._id
           );
+
+          if (!productData) return null;
 
           return (
             <div
@@ -98,8 +114,13 @@ const Cart = () => {
           <CartTotal />
           <div className='w-full text-end'>
             <button
-              className='bg-black text-white text-sm mt-3 px-8 py-3 cursor-pointer'
-              onClick={() => navigate('/place-order')}
+              disabled={cartData.length === 0}
+              className={`px-8 py-3 text-sm ${
+                cartData.length === 0
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-black text-white cursor-pointer'
+              }`}
+              onClick={validateToProceed}
             >
               PROCEED TO CHECKOUT
             </button>

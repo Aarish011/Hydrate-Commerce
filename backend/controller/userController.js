@@ -108,5 +108,63 @@ const userLogout = async (req, res) => {
     });
   }
 };
+const getUserProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
 
-export { registerUser, loginUser, userLogout };
+    const user = await userModel.findById(userId).select('-password');
+
+    if (!user) {
+      return res.json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    res.json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+// PUT /api/user/update
+const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, email, phone, address } = req.body;
+
+    const updatedUser = await userModel
+      .findByIdAndUpdate(
+        userId,
+        {
+          name,
+          email,
+          phone,
+          address,
+        },
+        { new: true }
+      )
+      .select('-password');
+
+    res.json({
+      success: true,
+      user: updatedUser,
+      message: 'Profile updated successfully',
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export { registerUser, loginUser, userLogout, getUserProfile, updateProfile };

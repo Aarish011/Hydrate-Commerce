@@ -57,6 +57,7 @@ const Login = () => {
       toast.error(error.response?.data?.message || 'Something went wrong');
     }
   };
+
   useEffect(() => {
     if (token) {
       navigate('/');

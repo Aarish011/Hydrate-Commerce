@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { backendURL } from '../App';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const Login = ({ setToken }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,7 +18,9 @@ const Login = ({ setToken }) => {
         password,
       });
       if (response.data.success) {
+        localStorage.setItem('token', response.data.token);
         setToken(response.data.token);
+        navigate('/orders');
       } else {
         toast.error('data is not correct');
       }

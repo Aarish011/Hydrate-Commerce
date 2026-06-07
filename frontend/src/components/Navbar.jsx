@@ -14,7 +14,15 @@ const Navbar = () => {
 
   const logout = async () => {
     try {
-      const response = await axios.post(`${backendURL}/api/user/logout`);
+      const response = await axios.post(
+        `${backendURL}/api/user/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.data.success) {
         localStorage.removeItem('token');
@@ -109,9 +117,11 @@ const Navbar = () => {
           {token && (
             <div className='hidden group-hover:block absolute right-0 pt-4 z-20'>
               <div className='flex flex-col w-40 bg-white rounded-lg shadow-lg border overflow-hidden text-sm text-gray-700'>
-                <p className='px-4 py-3 cursor-pointer hover:bg-gray-100'>
-                  My Profile
-                </p>
+                <Link to={'/my-profile'}>
+                  <p className='px-4 py-3 cursor-pointer hover:bg-gray-100'>
+                    My Profile
+                  </p>
+                </Link>
 
                 <Link to='/orders' className='px-4 py-3 hover:bg-gray-100'>
                   Orders

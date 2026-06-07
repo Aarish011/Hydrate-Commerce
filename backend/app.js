@@ -8,6 +8,7 @@ import adminRouter from './routes/adminRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import productRouter from './routes/productRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
+import orderRouter from './routes/orderRoutes.js';
 
 // app config
 ConnectDB();
@@ -32,5 +33,6 @@ app.use('/api/user', userRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/product', productRouter);
 app.use('/api/cart', cartRoutes);
+app.use('/api/order', orderRouter);
 
 export default app;
