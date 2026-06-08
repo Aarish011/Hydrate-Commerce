@@ -138,13 +138,35 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile Dropdown */}
+        {/* Mobile Dropdown - FIXED */}
         {showProfile && (
-          <div className='absolute right-0 top-8 bg-slate-100 py-3 px-5 w-36 shadow-md rounded sm:hidden z-50'>
+          <div className='absolute right-4 top-16 bg-slate-100 py-3 px-5 w-36 shadow-md rounded sm:hidden z-[60]'>
             <div className='flex flex-col gap-2 text-gray-700'>
-              <p className='cursor-pointer'>My Profile</p>
-              <p className='cursor-pointer'>Orders</p>
-              <p className='cursor-pointer'>Logout</p>
+              <Link
+                to='/my-profile'
+                onClick={() => setShowProfile(false)}
+                className='cursor-pointer hover:text-gray-900'
+              >
+                My Profile
+              </Link>
+
+              <Link
+                to='/orders'
+                onClick={() => setShowProfile(false)}
+                className='cursor-pointer hover:text-gray-900'
+              >
+                Orders
+              </Link>
+
+              <p
+                className='cursor-pointer hover:text-red-600'
+                onClick={() => {
+                  logout();
+                  setShowProfile(false);
+                }}
+              >
+                Logout
+              </p>
             </div>
           </div>
         )}

@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { products } from '../assets/assets';
+import React, { useState, useEffect, useContext } from 'react';
+import { ShopContext } from '../context/ShopContext';
 import Title from './Title';
 import ProductItem from './ProductItem';
 
 const BestSeller = () => {
   const [bestSeller, setBestSeller] = useState([]);
+  const { products } = useContext(ShopContext);
 
   useEffect(() => {
     const bestProducts = products.filter((item) => item.bestseller === true);
 
     setBestSeller(bestProducts.slice(0, 5));
-  }, []);
+  }, [products]);
 
   return (
     <>

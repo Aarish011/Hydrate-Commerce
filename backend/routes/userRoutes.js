@@ -5,6 +5,8 @@ import {
   userLogout,
   getUserProfile,
   updateProfile,
+  sendOTP,
+  verifyOTP,
 } from '../controller/userController.js';
 import userAuth from '../middlewares/userAuth.js';
 
@@ -15,5 +17,7 @@ userRouter.post('/login', loginUser);
 userRouter.post('/logout', userAuth, userLogout);
 userRouter.get('/profile', userAuth, getUserProfile);
 userRouter.put('/update', userAuth, updateProfile);
+userRouter.post('/send-otp', sendOTP);
+userRouter.post('/verify-otp', verifyOTP);
 
 export default userRouter;

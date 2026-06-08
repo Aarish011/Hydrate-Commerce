@@ -94,6 +94,79 @@ const PlaceOrder = () => {
         } else {
           toast.error(response.data.message);
         }
+      } else if (method === 'Stripe') {
+        const response = await axios.post(
+          `${backendURL}/api/order/stripe`,
+          orderData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.data.success) {
+          window.location.replace(response.data.session_url);
+          toast.success(response.data.message);
+        } else {
+          toast.error(response.data.message);
+        }
+      } else if (method === 'Razorpay') {
+        console.log(`${backendURL}/api/order/razorpay`);
+        const response = await axios.post(
+          `${backendURL}/api/order/razorpay`,
+          orderData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.data.success) {
+          const { order, key, orderId } = response.data;
+
+          const options = {
+            key,
+            amount: order.amount,
+            currency: order.currency,
+            name: 'Your Store',
+            description: 'Order Payment',
+            order_id: order.id,
+
+            handler: async function (paymentResponse) {
+              const verifyResponse = await axios.post(
+                `${backendURL}/api/order/verify-razorpay`,
+                {
+                  orderId,
+                  razorpay_order_id: paymentResponse.razorpay_order_id,
+                  razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              );
+
+              if (verifyResponse.data.success) {
+                toast.success('Payment Successful');
+                navigate('/orders');
+              } else {
+                toast.error('Payment Verification Failed');
+              }
+            },
+
+            theme: {
+              color: '#3399cc',
+            },
+          };
+
+          const razorpay = new window.Razorpay(options);
+          razorpay.open();
+        } else {
+          toast.error(response.data.message);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -139,7 +212,6 @@ const PlaceOrder = () => {
 
         <input
           name='email'
-          name = 'email'
           value={formData.email}
           onChange={onChangeHandler}
           className='border border-gray-200 rounded-lg py-3 px-4 focus:outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-200 transition-all duration-200'
@@ -219,9 +291,9 @@ const PlaceOrder = () => {
 
           <div className='flex flex-col gap-4 mt-6'>
             <div
-              onClick={() => setMethod('STRIPE')}
+              onClick={() => setMethod('Stripe')}
               className={`flex items-center justify-between gap-3 border-2 rounded-xl p-4 cursor-pointer transition-all duration-200 hover:shadow-md ${
-                method === 'STRIPE'
+                method === 'Stripe'
                   ? 'border-gray-800 bg-gray-50'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
@@ -229,10 +301,10 @@ const PlaceOrder = () => {
               <div className='flex items-center gap-3'>
                 <div
                   className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                    method === 'STRIPE' ? 'border-gray-800' : 'border-gray-300'
+                    method === 'Stripe' ? 'border-gray-800' : 'border-gray-300'
                   }`}
                 >
-                  {method === 'STRIPE' && (
+                  {method === 'Stripe' && (
                     <div className='w-3 h-3 rounded-full bg-gray-800'></div>
                   )}
                 </div>
@@ -242,19 +314,19 @@ const PlaceOrder = () => {
             </div>
 
             <div
-              onClick={() => setMethod('RAZORPAY')}
+              onClick={() => setMethod('Razorpay')}
               className={`flex items-center gap-3 border-2 rounded-xl p-4 cursor-pointer transition-all duration-200 hover:shadow-md ${
-                method === 'RAZORPAY'
+                method === 'Razorpay'
                   ? 'border-gray-800 bg-gray-50'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
               <div
                 className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                  method === 'RAZORPAY' ? 'border-gray-800' : 'border-gray-300'
+                  method === 'Razorpay' ? 'border-gray-800' : 'border-gray-300'
                 }`}
               >
-                {method === 'RAZORPAY' && (
+                {method === 'Razorpay' && (
                   <div className='w-3 h-3 rounded-full bg-gray-800'></div>
                 )}
               </div>

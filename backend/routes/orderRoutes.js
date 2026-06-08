@@ -10,10 +10,14 @@ import {
   allOrders,
   updateStatus,
   trackOrder,
+  verifyStripe,
+  verifyRazorpay,
 } from '../controller/orderController.js';
 import { Admin } from 'mongodb';
 
 const orderRouter = express.Router();
+
+orderRouter.post('/verifystripe', userAuth, verifyStripe);
 
 orderRouter.get('/userorders', userAuth, userOrders);
 orderRouter.get('/list', adminAauth, allOrders);
@@ -24,6 +28,8 @@ orderRouter.get('/:orderId', userAuth, trackOrder);
 
 orderRouter.post('/stripe', userAuth, placeOrderStrip);
 orderRouter.post('/place', userAuth, placeOrderCOD);
-orderRouter.post('/razropay', userAuth, placeOrderrazorpay);
+orderRouter.post('/razorpay', userAuth, placeOrderrazorpay);
+
+orderRouter.post('/verify-razorpay', userAuth, verifyRazorpay);
 
 export default orderRouter;

@@ -1,11 +1,12 @@
 import userModel from '../model/userModel.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import client from '../config/twilio.js';
 
 // Register User
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, phone, phoneVerified } = req.body;
 
     // Check if user already exists
     const exists = await userModel.findOne({ email });
@@ -21,11 +22,13 @@ const registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create user
+    // Create user with phoneVerified set to true (since OTP was verified)
     const user = await userModel.create({
       name,
       email,
       password: hashedPassword,
+      phone,
+      phoneVerified: phoneVerified || false,
     });
 
     // Generate JWT
@@ -108,6 +111,7 @@ const userLogout = async (req, res) => {
     });
   }
 };
+
 const getUserProfile = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -134,6 +138,7 @@ const getUserProfile = async (req, res) => {
     });
   }
 };
+
 // PUT /api/user/update
 const updateProfile = async (req, res) => {
   try {
@@ -167,4 +172,81 @@ const updateProfile = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser, userLogout, getUserProfile, updateProfile };
+const sendOTP = async (req, res) => {
+  try {
+    const { phone } = req.body;
+
+    // Add country code for E.164 format (India: +91)
+    const formattedPhone = phone.startsWith('+') ? phone : `+91${phone}`;
+
+    await client.verify.v2
+      .services(process.env.TWILIO_VERIFY_SERVICE_SID)
+      .verifications.create({
+        to: formattedPhone,
+        channel: 'sms',
+      });
+
+    res.json({
+      success: true,
+      message: 'OTP sent successfully',
+    });
+  } catch (error) {
+    console.error('Send OTP Error:', error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const verifyOTP = async (req, res) => {
+  try {
+    const { phone, otp } = req.body;
+
+    // Add country code for E.164 format (India: +91)
+    const formattedPhone = phone.startsWith('+') ? phone : `+91${phone}`;
+
+    const verification = await client.verify.v2
+      .services(process.env.TWILIO_VERIFY_SERVICE_SID)
+      .verificationChecks.create({
+        to: formattedPhone,
+        code: otp, // Twilio expects 'code'
+      });
+
+    if (verification.status === 'approved') {
+      // Update phone verification status using phone number
+      // The user will be saved with phoneVerified: true during registration
+      // This just marks the phone as verified before registration
+
+      // Store verification status temporarily (optional)
+      // You can use Redis or a temp store, but for now we just return success
+
+      return res.json({
+        success: true,
+        message: 'Phone verified successfully',
+        phoneVerified: true,
+      });
+    }
+
+    res.json({
+      success: false,
+      message: 'Invalid OTP',
+    });
+  } catch (error) {
+    console.error('Verify OTP Error:', error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export {
+  registerUser,
+  loginUser,
+  userLogout,
+  getUserProfile,
+  updateProfile,
+  verifyOTP,
+  sendOTP,
+};

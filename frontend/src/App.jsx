@@ -14,6 +14,7 @@ import TrackOrder from './pages/TrackOrder';
 import Footer from './components/Footer';
 import ContactSupport from './pages/ContactSupport';
 import MyProfile from './pages/MyProfile';
+import Verify from './pages/Verify';
 import SearchBar from './components/Searchbar';
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -39,6 +40,7 @@ const App = () => {
           element={<ContactSupport />}
         />
         <Route path='/my-profile' element={<MyProfile />} />
+        <Route path='/verify' element={<Verify />} />
       </Routes>
       <Footer />
     </div>

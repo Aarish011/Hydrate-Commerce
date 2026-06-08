@@ -211,18 +211,23 @@ const TrackOrder = () => {
                   </div>
                 )}
 
-                {/* Payment Status Badge */}
-                <div className='flex items-center gap-2'>
-                  <span className='text-sm text-gray-500'>Payment:</span>
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      orderDetails?.payment
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-orange-100 text-orange-700'
-                    }`}
-                  >
-                    {orderDetails?.payment ? 'Paid' : 'Pending'}
-                  </span>
+                {/* Payment Status Badge and Method */}
+                <div className='flex flex-col items-end gap-1'>
+                  <div className='flex items-center gap-2'>
+                    <span className='text-sm text-gray-500'>Payment:</span>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        orderDetails?.payment
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-orange-100 text-orange-700'
+                      }`}
+                    >
+                      {orderDetails?.payment ? 'Paid' : 'Pending'}
+                    </span>
+                  </div>
+                  <div className='text-xs text-gray-400 '>
+                    Method: {orderDetails?.paymentMethod || 'Not specified'}
+                  </div>
                 </div>
               </div>
             </div>
